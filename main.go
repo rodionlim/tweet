@@ -22,7 +22,10 @@ import (
 	"github.com/rodionlim/tweet/library/tweet"
 )
 
-var portvar int
+var (
+	portvar int
+	hostvar string
+)
 
 type key int
 
@@ -40,13 +43,15 @@ type NotifierObj struct {
 
 func init() {
 	flag.IntVar(&portvar, "port", 3000, "Specify a port for the server to listen on")
+	flag.StringVar(&hostvar, "host", "localhost", "Specify host of the server, e.g. 10.50.20.118")
 }
 
 func main() {
 	flag.Parse()
+
 	logger := log.Ctx(context.Background())
 	tpl := template.Must(template.ParseFiles("./index.html"))
-	tdata := NewTemplateData(portvar)
+	tdata := NewTemplateData(hostvar, portvar)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/favicon.ico", faviconHandler)
@@ -64,7 +69,7 @@ func main() {
 		}
 		tpl.Execute(w, tdata)
 	})
-	logger.Info(fmt.Sprintf("Listening on localhost:%d", portvar))
+	logger.Info(fmt.Sprintf("Listening on %s:%d", hostvar, portvar))
 	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", portvar), mux))
 }
 
@@ -204,11 +209,11 @@ func faviconHandler(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func NewTemplateData(port int) templateData {
+func NewTemplateData(host string, port int) templateData {
 	st, _ := tweet.GetLatestSearchTerms()
 	return templateData{
 		Started:        false,
-		SchemeHostPort: fmt.Sprintf("http://%s:%d", "localhost", port),
+		SchemeHostPort: fmt.Sprintf("http://%s:%d", host, port),
 		SearchTerms:    st,
 		mutex:          &sync.Mutex{},
 	}
