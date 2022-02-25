@@ -1,4 +1,5 @@
 # Overview
+
 Tweet is a twitterbot listener and distributor of relevant tweets written in Golang. It comprises of a http server, a UI for custom parameters and a wrapper library that interacts with Twitter API v2.
 
 # Installation
@@ -18,6 +19,7 @@ go get -u github.com/rodionlim/tweet
 # Usage
 
 To spin up the webserver and start the twitter notification service
+
 ```
 # Run in the root of the repository
 go run .
@@ -39,4 +41,4 @@ req.Get()
 
 # License
 
-Tweet is released under the Apache 2.0 license. See [LICENSE](https://github.com/rodionlim/tweet/blob/master/LICENSE.txt)
+Tweet is released under the Apache 2.0 license. See [LICENSE](https://github.com/rodionlim/tweet/blob/master/LICENSE)

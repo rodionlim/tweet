@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html/template"
 	"io"
@@ -20,6 +21,8 @@ import (
 	"github.com/rodionlim/tweet/library/notifier"
 	"github.com/rodionlim/tweet/library/tweet"
 )
+
+var portvar int
 
 type key int
 
@@ -35,11 +38,15 @@ type NotifierObj struct {
 	notifyArgs interface{}
 }
 
+func init() {
+	flag.IntVar(&portvar, "port", 3000, "Specify a port for the server to listen on")
+}
+
 func main() {
+	flag.Parse()
 	logger := log.Ctx(context.Background())
 	tpl := template.Must(template.ParseFiles("./index.html"))
-	port := 3000
-	tdata := NewTemplateData(port)
+	tdata := NewTemplateData(portvar)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/favicon.ico", faviconHandler)
@@ -57,8 +64,8 @@ func main() {
 		}
 		tpl.Execute(w, tdata)
 	})
-	logger.Info(fmt.Sprintf("Listening on localhost:%d", port))
-	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), mux))
+	logger.Info(fmt.Sprintf("Listening on localhost:%d", portvar))
+	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", portvar), mux))
 }
 
 func startHandler(w http.ResponseWriter, req *http.Request, tdata *templateData) {
