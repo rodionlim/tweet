@@ -23,8 +23,9 @@ import (
 )
 
 var (
-	portvar int
-	hostvar string
+	portvar     int
+	hostvar     string
+	intervalvar int
 )
 
 type key int
@@ -43,6 +44,7 @@ type NotifierObj struct {
 
 func init() {
 	flag.IntVar(&portvar, "port", 3000, "Specify a port for the server to listen on")
+	flag.IntVar(&intervalvar, "interval", 5, "Specify interval in minutes to poll data source for news")
 	flag.StringVar(&hostvar, "host", "localhost", "Specify host of the server, e.g. 10.50.20.118")
 }
 
@@ -115,7 +117,7 @@ func startHandler(w http.ResponseWriter, req *http.Request, tdata *templateData)
 
 		ctx = context.WithValue(ctx, keyKeywords, kw)
 		ctx = context.WithValue(ctx, keyTdata, tdata)
-		ctx = context.WithValue(ctx, keyInterval, time.Minute*3)
+		ctx = context.WithValue(ctx, keyInterval, time.Minute*time.Duration(intervalvar))
 		ctx = context.WithValue(ctx, keyNotifierObj, notifierObj)
 
 		go start(ctx)

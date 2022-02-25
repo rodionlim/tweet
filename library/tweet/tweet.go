@@ -68,8 +68,9 @@ func (r *Req) Get() (*Tweets, error) {
 	logger.Infof("Recv headers: %v\n", resp.Header)
 
 	body, _ := io.ReadAll(resp.Body)
+	r.tweets = Tweets{} // Empty the variable first
 	json.Unmarshal(body, &r.tweets)
-	logger.Infof("%+v", r.tweets)
+	logger.Infof("Count[%d] Tweets %+v", len(r.tweets.Data), r.tweets)
 	return &r.tweets, nil
 }
 
